@@ -49,10 +49,6 @@ async function authUser4Hotel(userId: number): Promise<[Enrollments | null | any
     include: { TicketType: true },
   });
 
-  // console.log(ticket);
-  // console.log('-=-==-=-=-=-=-=-=-=-=-=-=-=');
-  // console.log(enrollment);
-
   if (!ticket) {
     return [enrollment, null];
   }
@@ -60,8 +56,24 @@ async function authUser4Hotel(userId: number): Promise<[Enrollments | null | any
   return [enrollment, ticket];
 }
 
+async function validateTicket(ticketId: number) {
+  const result = await prisma.ticket.findUnique({
+    where: { id: ticketId },
+  });
+  return result;
+}
+
+async function validateHotel(hotelId: number) {
+  const result = await prisma.hotel.findUnique({
+    where: { id: hotelId },
+  });
+  return result;
+}
+
 export const hotelRepository = {
   findAllHotels,
   findHotelById,
   authUser4Hotel,
+  validateTicket,
+  validateHotel,
 };

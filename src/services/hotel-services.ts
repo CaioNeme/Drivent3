@@ -15,6 +15,9 @@ async function getHotels(userId: number) {
     throw paymentRequiredError();
   }
 
+  const ticket = await hotelRepository.validateTicket(validUser[1].id);
+  if (!ticket) throw notFoundError();
+
   const trivago = await hotelRepository.findAllHotels();
   if (!trivago || trivago.length === 0) throw notFoundError();
   return trivago;
@@ -23,6 +26,9 @@ async function getHotels(userId: number) {
 async function getHotelById(hotelId: number, userId: number) {
   if (!userId) throw notFoundError();
   if (!hotelId) throw notFoundError();
+
+  const hotel = await hotelRepository.validateHotel(hotelId);
+  if (!hotel) throw notFoundError();
 
   const validUser = await hotelRepository.authUser4Hotel(userId);
 
@@ -35,6 +41,9 @@ async function getHotelById(hotelId: number, userId: number) {
   if (!validUser[1].TicketType.includesHotel) {
     throw paymentRequiredError();
   }
+
+  const ticket = await hotelRepository.validateTicket(validUser[1].id);
+  if (!ticket) throw notFoundError();
 
   const trivago = await hotelRepository.findHotelById(hotelId, userId);
   if (!trivago) throw notFoundError();
